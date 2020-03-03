@@ -39,10 +39,6 @@ newtype Sudoku = Sudoku {sudlist :: [[Maybe Int]]}
 emptyBoard :: Sudoku
 emptyBoard = Sudoku $ replicate 9 (replicate 9 Nothing)
 
-runSudokerT (SudokerT s) = runStateT s
-execSudokerT (SudokerT s) = execStateT s
-evalSudokerT (SudokerT s) = evalStateT s
-
 class (Monad m) => MonadSudoker m where
     valid :: m Bool
     putMaybe :: Coords -> Maybe Int -> m ()
@@ -57,6 +53,14 @@ class (Monad m) => MonadSudoker m where
 
 newtype SudokerT m a = SudokerT (StateT Sudoku m a) deriving (Functor, Applicative, Monad, MonadTrans, MonadState Sudoku, MonadIO)
 newtype Sudoker a = Sudoker (SudokerT Identity a) deriving (Functor, Applicative, Monad, MonadState Sudoku)
+
+runSudokerT (SudokerT s) = runStateT s
+execSudokerT (SudokerT s) = execStateT s
+evalSudokerT (SudokerT s) = evalStateT s
+
+runSudoker (Sudoker m) = runSudokerT m
+evalSudoker s = fst . runIdentity . runSudoker s
+execSudoker s = snd . runIdentity . runSudoker s
 
 number :: Coords -> Sudoku -> Maybe Int
 number (Coords x y) (Sudoku ll) = (ll !! y) !! x
@@ -92,13 +96,12 @@ instance (Monad m) => MonadSudoker (SudokerT m) where
          all (\(_, l) -> not $ null l) <$> allPossibilities]
     
     possibilities c = gets (sudAllowed c)
-    allPossibilities = let all = uncurry Coords <$> ((,) <$> [0..8] <*> [0..8]) in
-        sortOn (length . snd) <$> mapM (\c -> (,) c <$> possibilities c) all
+    allPossibilities = 
+        let all = uncurry Coords <$> ((,) <$> [0..8] <*> [0..8]) in 
+            sortOn (length . snd) <$> (filterM (\c -> isNothing <$> gets (number c)) all >>= mapM (\c -> (,) c <$> possibilities c))
 
 instance (MonadFail m) => MonadFail (SudokerT m) where
-    fail = fail
-
-
+    fail = fail 
 
 instance Show Sudoku where
     show (Sudoku ll) = replicate 25 '-' ++ "\n" ++ concatMap showRow' (zip [0..] ll)
