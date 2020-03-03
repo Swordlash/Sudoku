@@ -4,16 +4,16 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 15647fee852a132c64ec55e1f50f73340ba6b67906c9b41c472a94c1bda6655d
+-- hash: ce2d092cb3fb3bb9462e4631d438281fb07e32bec69dae9a0eac0d5d91a7e0cc
 
 name:           Sudoku
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/Sudoku#readme>
-homepage:       https://github.com/githubuser/Sudoku#readme
-bug-reports:    https://github.com/githubuser/Sudoku/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2020 Author name here
+description:    Please see the README on GitHub at <https://github.com/Swordlash/Sudoku#readme>
+homepage:       https://github.com/Swordlash/Sudoku#readme
+bug-reports:    https://github.com/Swordlash/Sudoku/issues
+author:         Mateusz Goślinowski
+maintainer:     mateusz.goslinowski@gmail.com
+copyright:      2020 Mateusz Goślinowski
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/Sudoku
+  location: https://github.com/Swordlash/Sudoku
 
 library
   exposed-modules:
@@ -35,9 +35,10 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , mtl
   default-language: Haskell2010
 
-executable Sudoku-exe
+executable Sudoku
   main-is: Main.hs
   other-modules:
       Paths_Sudoku
@@ -47,6 +48,7 @@ executable Sudoku-exe
   build-depends:
       Sudoku
     , base >=4.7 && <5
+    , mtl
   default-language: Haskell2010
 
 test-suite Sudoku-test
@@ -60,4 +62,5 @@ test-suite Sudoku-test
   build-depends:
       Sudoku
     , base >=4.7 && <5
+    , mtl
   default-language: Haskell2010
